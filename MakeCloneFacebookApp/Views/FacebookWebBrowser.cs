@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MakeCloneFacebookApp.Models;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -25,12 +26,11 @@ namespace MakeCloneFacebookApp.Views
         };
         private const string FBURL = "https://www.facebook.com";
 
-        public string UserName { private set; get; }
-        public string Password { private set; get; }
-
-        public string PostWallMessage { private set; get; }
-        public string SendMessage { private set; get; }
-        public int SendMessageCount { private set; get; }
+        public JobConfig Config { private set; get; }
+        public List<PostWallMessage> PostWallMessages { private set; get; }
+        public List<SendMessage> SendMessages { private set; get; }
+        public User CurrentRunUser { private set; get; }
+        private int userIndex;
 
         private int _Step = -1;
         private int Step
@@ -48,41 +48,84 @@ namespace MakeCloneFacebookApp.Views
                 return _Step;
             }
         }
-        private FacebookAction Action;
-        public FacebookWebBrowser(string userName, string password, string postWallMessage, string sendMessage, int sendMessageCount = 3)
+        private FacebookAction Action = FacebookAction.NoAction;
+        public FacebookWebBrowser(JobConfig config, List<PostWallMessage> postWallMessages, List<SendMessage> sendMessages)
         {
             InitializeComponent();
-            this.UserName = userName;
-            this.Password = password;
-            this.PostWallMessage = postWallMessage;
-            this.SendMessage = sendMessage;
-            this.SendMessageCount = sendMessageCount;
+            this.Config = config;
+            this.PostWallMessages = postWallMessages;
+            this.SendMessages = sendMessages;
+            userIndex = 0;
             this.Load += FacebookWebBrowser_Load;
         }
 
         private void FacebookWebBrowser_Load(object sender, EventArgs e)
         {
-            BeginMakeClone();
+            if (IsNextUser())
+            {
+                ActionCompleted();
+            }
+        }
+        private bool IsNextUser()
+        {
+            if (userIndex < Config.UserConfigs.Count)
+            {
+                CurrentRunUser = Config.UserConfigs[userIndex];
+                userIndex = 0;
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
         private void ActionCompleted()
         {
             if(Action == FacebookAction.NoAction)
             {
-                BeginPostWall();
+                if (Config.IsPostWall)
+                {
+                    BeginPostWall();
+                }
+                else if(Config.IsSendMessage)
+                {
+                    BeginSendMessage();
+                }
+                else
+                {
+                    Action = FacebookAction.AllActionCompleted;
+                    if (IsNextUser())
+                    {
+                        Action = FacebookAction.NoAction;
+                        ActionCompleted();
+                    }
+                }
             }
             else if(Action == FacebookAction.Postwall)
             {
-                BeginSendMessage();
+                if (Config.IsSendMessage)
+                {
+                    BeginSendMessage();
+                }
+                else
+                {
+                    Action = FacebookAction.AllActionCompleted;
+                    if (IsNextUser())
+                    {
+                        Action = FacebookAction.NoAction;
+                        ActionCompleted();
+                    }
+                }
             }
             else if(Action == FacebookAction.SendMessage)
             {
                 Action = FacebookAction.AllActionCompleted;
+                if (IsNextUser())
+                {
+                    Action = FacebookAction.NoAction;
+                    ActionCompleted();
+                }
             }
-        }
-        private void BeginMakeClone()
-        {
-            Step = 0;
-            wb.Navigate(FBURL);
         }
         private void BeginPostWall()
         {
@@ -103,8 +146,8 @@ namespace MakeCloneFacebookApp.Views
             {
                 if (wb.Document.GetElementById("email") != null)
                 {
-                    wb.Document.GetElementById("email").SetAttribute("value", this.UserName);
-                    wb.Document.GetElementById("pass").SetAttribute("value", this.Password);
+                    wb.Document.GetElementById("email").SetAttribute("value", CurrentRunUser.UserName);
+                    wb.Document.GetElementById("pass").SetAttribute("value", CurrentRunUser.Password);
                     var login_form = wb.Document.GetElementById("login_form");
                     if (login_form != null)
                     {
@@ -199,7 +242,7 @@ namespace MakeCloneFacebookApp.Views
                             Step = -2; //Pending
 
                             SetForegroundWindow(wb.Handle);
-                            SendKeys.SendWait(this.PostWallMessage);
+                            SendKeys.SendWait(RandomPostWallMessage());
 
                             ////Click button Post
                             System.Threading.Thread thrun = new System.Threading.Thread(new System.Threading.ThreadStart(() =>
@@ -240,8 +283,8 @@ namespace MakeCloneFacebookApp.Views
             {
                 if (wb.Document.GetElementById("email") != null)
                 {
-                    wb.Document.GetElementById("email").SetAttribute("value", this.UserName);
-                    wb.Document.GetElementById("pass").SetAttribute("value", this.Password);
+                    wb.Document.GetElementById("email").SetAttribute("value", CurrentRunUser.UserName);
+                    wb.Document.GetElementById("pass").SetAttribute("value", CurrentRunUser.Password);
                     var login_form = wb.Document.GetElementById("login_form");
                     if (login_form != null)
                     {
@@ -380,7 +423,7 @@ namespace MakeCloneFacebookApp.Views
                                                         this.Invoke(new Action(() =>
                                                         {
                                                             SetForegroundWindow(wb.Handle);
-                                                            SendKeys.SendWait(this.SendMessage);
+                                                            SendKeys.SendWait(RandomSendMessage());
                                                         }));
 
                                                         System.Threading.Thread.Sleep(1000);
@@ -407,7 +450,7 @@ namespace MakeCloneFacebookApp.Views
                                                         }));
 
                                                         sendCount++;
-                                                        if (sendCount >= this.SendMessageCount)
+                                                        if (sendCount >= Config.CountPeople)
                                                         {
                                                             break;
                                                         }
@@ -415,13 +458,13 @@ namespace MakeCloneFacebookApp.Views
                                                 }
 
                                             }
-                                            if (sendCount >= this.SendMessageCount)
+                                            if (sendCount >= Config.CountPeople)
                                             {
                                                 break;
                                             }
                                         }
                                     }
-                                    if (sendCount >= this.SendMessageCount)
+                                    if (sendCount >= Config.CountPeople)
                                     {
                                         break;
                                     }
@@ -435,11 +478,13 @@ namespace MakeCloneFacebookApp.Views
                 }
             }
         }
-
-
-        private void wb_DocumentCompleted(object sender, WebBrowserDocumentCompletedEventArgs e)
+        private string RandomPostWallMessage()
         {
-
+            return PostWallMessages[new Random().Next(0, PostWallMessages.Count() - 1)].Message;
+        }
+        private string RandomSendMessage()
+        {
+            return SendMessages[new Random().Next(0, SendMessages.Count() - 1)].Message;
         }
     }
 }

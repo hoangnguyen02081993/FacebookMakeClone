@@ -1,4 +1,5 @@
-﻿using MakeCloneFacebookApp.Helpers;
+﻿using MakeCloneFacebookApp.Common;
+using MakeCloneFacebookApp.Helpers;
 using MakeCloneFacebookApp.Models;
 using System;
 using System.Collections.Generic;
@@ -74,7 +75,7 @@ namespace MakeCloneFacebookApp.Views
 
         private void BtnAdd_Click(object sender, EventArgs e)
         {
-            using (frm_UserAction frm = new frm_UserAction(frm_UserAction.UserAction.Add))
+            using (frm_UserAction frm = new frm_UserAction(AppConfigAction.Add))
             {
                 if(frm.ShowDialog() == DialogResult.OK)
                 {
@@ -88,7 +89,7 @@ namespace MakeCloneFacebookApp.Views
         {
             if (gv_users.SelectedRows.Count > 0)
             {
-                using (frm_UserAction frm = new frm_UserAction(frm_UserAction.UserAction.Edit, new User()
+                using (frm_UserAction frm = new frm_UserAction(AppConfigAction.Edit, new User()
                 {
                     UserName = gv_users.SelectedRows[0].Cells["username"].Value.ToString(),
                     Password = gv_users.SelectedRows[0].Cells["password"].Value.ToString()

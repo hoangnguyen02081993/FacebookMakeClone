@@ -151,17 +151,17 @@ namespace MakeCloneFacebookApp.Helpers
             }
         }
 
-        public IEnumerable<string> GetSendMessages()
+        public IEnumerable<SendMessage> GetSendMessages()
         {
             return Data.SendMessageTemplate;
         }
-        public bool SenMessageAction(string sendMessage, ActionType type = ActionType.Add)
+        public bool SenMessageAction(SendMessage sendMessage, ActionType type = ActionType.Add)
         {
             if (IsOpenSuccess)
             {
                 try
                 {
-                    var message = Data.SendMessageTemplate.Where(m => m == sendMessage).FirstOrDefault();
+                    var message = Data.SendMessageTemplate.Where(m => m.Id == sendMessage.Id).FirstOrDefault();
                     switch (type)
                     {
                         case ActionType.Add:
@@ -173,18 +173,18 @@ namespace MakeCloneFacebookApp.Helpers
                             }
                             return false;
                         case ActionType.Edit:
-                            if (user != null)
+                            if (message != null)
                             {
-                                Data.Users.Remove(user);
-                                Data.Users.Add(User);
+                                Data.SendMessageTemplate.Remove(message);
+                                Data.SendMessageTemplate.Add(sendMessage);
                                 Save();
                                 return true;
                             }
                             return false;
                         case ActionType.Remove:
-                            if (user != null)
+                            if (message != null)
                             {
-                                Data.Users.Remove(user);
+                                Data.SendMessageTemplate.Remove(message);
                                 Save();
                             }
                             return true;
@@ -203,14 +203,89 @@ namespace MakeCloneFacebookApp.Helpers
                 return false;
             }
         }
-        public bool SaveUsers(List<User> users)
+        public bool SaveSendMessages(List<SendMessage> sendMessages)
         {
             if (IsOpenSuccess)
             {
                 try
                 {
-                    Data.Users.RemoveAll(u => true);
-                    Data.Users.AddRange(users);
+                    Data.SendMessageTemplate.RemoveAll(u => true);
+                    Data.SendMessageTemplate.AddRange(sendMessages);
+                    Save();
+                    return true;
+                }
+                catch (Exception ex)
+                {
+                    ex.Message.WriteLog();
+                    return false;
+                }
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        public IEnumerable<PostWallMessage> GetPostWallMessages()
+        {
+            return Data.PostWallContentsTemplate;
+        }
+        public bool PostWallMessageAction(PostWallMessage postWallMessage, ActionType type = ActionType.Add)
+        {
+            if (IsOpenSuccess)
+            {
+                try
+                {
+                    var message = Data.PostWallContentsTemplate.Where(m => m.Id == postWallMessage.Id).FirstOrDefault();
+                    switch (type)
+                    {
+                        case ActionType.Add:
+                            if (message == null)
+                            {
+                                Data.PostWallContentsTemplate.Add(message);
+                                Save();
+                                return true;
+                            }
+                            return false;
+                        case ActionType.Edit:
+                            if (message != null)
+                            {
+                                Data.PostWallContentsTemplate.Remove(message);
+                                Data.PostWallContentsTemplate.Add(postWallMessage);
+                                Save();
+                                return true;
+                            }
+                            return false;
+                        case ActionType.Remove:
+                            if (message != null)
+                            {
+                                Data.PostWallContentsTemplate.Remove(message);
+                                Save();
+                            }
+                            return true;
+                        default:
+                            return false;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    ex.StackTrace.WriteLog();
+                    return false;
+                }
+            }
+            else
+            {
+                return false;
+            }
+        }
+        public bool SavePostWallMessages(List<PostWallMessage> postWallMessages)
+        {
+            if (IsOpenSuccess)
+            {
+                try
+                {
+                    Data.PostWallContentsTemplate.RemoveAll(u => true);
+                    Data.PostWallContentsTemplate.AddRange(postWallMessages);
                     Save();
                     return true;
                 }

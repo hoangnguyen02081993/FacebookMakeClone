@@ -9,13 +9,13 @@ namespace MakeCloneFacebookApp.Models
     public class Data
     {
         public List<User> Users { set; get; }
-        public List<string> PostWallContentsTemplate { set; get; }
-        public List<string> SendMessageTemplate { set; get; }
+        public List<PostWallMessage> PostWallContentsTemplate { set; get; }
+        public List<SendMessage> SendMessageTemplate { set; get; }
         public Data()
         {
             Users = new List<User>();
-            PostWallContentsTemplate = new List<string>();
-            SendMessageTemplate = new List<string>();
+            PostWallContentsTemplate = new List<PostWallMessage>();
+            SendMessageTemplate = new List<SendMessage>();
         }
     }
 }

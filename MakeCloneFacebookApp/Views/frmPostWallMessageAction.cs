@@ -13,53 +13,51 @@ using System.Windows.Forms;
 
 namespace MakeCloneFacebookApp.Views
 {
-    public partial class frm_UserAction : Form
+    public partial class frmPostWallMessageAction : Form
     {
         public AppConfigAction Action { private set; get; }
-        public User Result { private set; get; }
-        public frm_UserAction(AppConfigAction action, User user = null)
+        public PostWallMessage Result { private set; get; }
+        public frmPostWallMessageAction(AppConfigAction action, PostWallMessage postWallMessage = null)
         {
             InitializeComponent();
             this.Action = action;
-            this.Result = user;
-            this.Load += Frm_UserAction_Load;
+            this.Result = postWallMessage;
+            this.Load += FrmPostWallMessageAction_Load;
         }
 
-        private void Frm_UserAction_Load(object sender, EventArgs e)
+        private void FrmPostWallMessageAction_Load(object sender, EventArgs e)
         {
-            switch(Action)
+            switch (Action)
             {
                 case AppConfigAction.Add:
                     BtnOk.Text = "Add";
                     break;
                 case AppConfigAction.Edit:
-                    TbUserName.Enabled = false;
+                    TbMessage.Enabled = false;
                     BtnOk.Text = "Edit";
-                    TbUserName.Text = Result.UserName;
-                    TbPassword.Text = Result.Password;
+                    TbMessage.Text = Result.Message;
                     break;
                 default:
                     break;
             }
         }
 
-        private void BtnOk_Click(object sender, EventArgs e)
-        {
-            if(string.IsNullOrEmpty(TbUserName.Text) || string.IsNullOrEmpty(TbPassword.Text))
-            {
-                Until.ShowErrorBox("UserName or Password must be not null or empty!");
-            }
-            Result = new User()
-            {
-                UserName = TbUserName.Text,
-                Password = TbPassword.Text
-            };
-            DialogResult = DialogResult.OK;
-        }
-
         private void BtnCancel_Click(object sender, EventArgs e)
         {
             this.Close();
+        }
+
+        private void BtnOk_Click(object sender, EventArgs e)
+        {
+            if (string.IsNullOrEmpty(TbMessage.Text))
+            {
+                Until.ShowErrorBox("Message must be not null or empty!");
+            }
+            Result = new PostWallMessage()
+            {
+                Message = TbMessage.Text
+            };
+            DialogResult = DialogResult.OK;
         }
     }
 }

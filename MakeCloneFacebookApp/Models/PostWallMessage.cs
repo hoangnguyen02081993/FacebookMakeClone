@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace MakeCloneFacebookApp.Models
 {
-    public class SendMessage
+    public class PostWallMessage
     {
         public Guid Id { set; get; }
         public string Message { set; get; }

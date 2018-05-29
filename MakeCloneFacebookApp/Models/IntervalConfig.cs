@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace MakeCloneFacebookApp.Models
 {
-    public class SendMessage
+    public class IntervalConfig
     {
-        public Guid Id { set; get; }
-        public string Message { set; get; }
+        public int Interval { set; get; }
+        public bool IsRunNow { set; get; }
     }
 }

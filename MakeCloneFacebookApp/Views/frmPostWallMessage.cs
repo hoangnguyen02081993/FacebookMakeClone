@@ -13,22 +13,22 @@ using System.Windows.Forms;
 
 namespace MakeCloneFacebookApp.Views
 {
-    public partial class frmSendMessage : Form
+    public partial class frmPostWallMessage : Form
     {
         private JsonDBHelper dBHelper;
-        public frmSendMessage(ref JsonDBHelper dBHelper)
+        public frmPostWallMessage(ref JsonDBHelper dBHelper)
         {
             InitializeComponent();
             this.dBHelper = dBHelper;
-            this.Load += FrmSendMessage_Load;
+            this.Load += FrmPostWallMessage_Load;
         }
 
-        private void FrmSendMessage_Load(object sender, EventArgs e)
+        private void FrmPostWallMessage_Load(object sender, EventArgs e)
         {
-            gv_message.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            foreach (var message in dBHelper.GetSendMessages())
+            gv_postwallmessages.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+            foreach (var user in dBHelper.GetPostWallMessages())
             {
-                gv_message.Rows.Add(message.Message);
+                gv_postwallmessages.Rows.Add(user.Message);
             }
         }
         private void Btn_cancel_Click(object sender, EventArgs e)
@@ -37,16 +37,16 @@ namespace MakeCloneFacebookApp.Views
         }
         private void Btn_save_Click(object sender, EventArgs e)
         {
-            List<SendMessage> messages = new List<SendMessage>();
-            foreach (DataGridViewRow row in gv_message.Rows)
+            List<PostWallMessage> messages = new List<PostWallMessage>();
+            foreach (DataGridViewRow row in gv_postwallmessages.Rows)
             {
                 if (row.Cells["message"].Value == null)
                 {
                     continue;
                 }
-                messages.Add(new SendMessage() { Id = Guid.NewGuid(), Message = row.Cells["message"].Value.ToString()});
+                messages.Add(new PostWallMessage() { Id = Guid.NewGuid(), Message = row.Cells["message"].Value.ToString() });
             }
-            if (dBHelper.SaveSendMessages(messages))
+            if (dBHelper.SavePostWallMessages(messages))
             {
                 Until.ShowInfoBox("Saves users successfully");
             }
@@ -58,26 +58,26 @@ namespace MakeCloneFacebookApp.Views
 
         private void BtnRemove_Click(object sender, EventArgs e)
         {
-            if (gv_message.SelectedRows.Count > 0)
+            if (gv_postwallmessages.SelectedRows.Count > 0)
             {
-                gv_message.Rows.Remove(gv_message.SelectedRows[0]);
+                gv_postwallmessages.Rows.Remove(gv_postwallmessages.SelectedRows[0]);
             }
             else Until.ShowErrorBox("Please choose data first");
         }
 
         private void BtnEdit_Click(object sender, EventArgs e)
         {
-            if (gv_message.SelectedRows.Count > 0)
+            if (gv_postwallmessages.SelectedRows.Count > 0)
             {
-                using (frmSendMessageAction frm = new frmSendMessageAction(AppConfigAction.Edit, new SendMessage()
+                using (frmPostWallMessageAction frm = new frmPostWallMessageAction(AppConfigAction.Edit, new PostWallMessage()
                 {
-                    Message = gv_message.SelectedRows[0].Cells["message"].Value.ToString()
+                    Message = gv_postwallmessages.SelectedRows[0].Cells["message"].Value.ToString()
                 }))
                 {
                     if (frm.ShowDialog() == DialogResult.OK)
                     {
                         //TODO
-                        gv_message.SelectedRows[0].Cells["message"].Value = frm.Result.Message;
+                        gv_postwallmessages.SelectedRows[0].Cells["message"].Value = frm.Result.Message;
                     }
                 }
             }
@@ -86,12 +86,12 @@ namespace MakeCloneFacebookApp.Views
 
         private void BtnAdd_Click(object sender, EventArgs e)
         {
-            using (frmSendMessageAction frm = new frmSendMessageAction(AppConfigAction.Add))
+            using (frmPostWallMessageAction frm = new frmPostWallMessageAction(AppConfigAction.Add))
             {
                 if (frm.ShowDialog() == DialogResult.OK)
                 {
                     //TODO
-                    gv_message.Rows.Add(frm.Result.Message);
+                    gv_postwallmessages.Rows.Add(frm.Result.Message);
                 }
             }
         }
