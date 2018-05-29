@@ -24,12 +24,20 @@ namespace MakeCloneFacebookApp.Views
 
         private void Frm_Users_Load(object sender, EventArgs e)
         {
+            gv_users.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
             foreach (var user in dBHelper.GetUsers())
             {
                 gv_users.Rows.Add(user.UserName, user.Password);
             }
         }
-
+        private void Gv_users_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
+        {
+            if (gv_users.Columns[e.ColumnIndex].Index == 1 && e.Value != null)
+            {
+                gv_users.Rows[e.RowIndex].Tag = e.Value;
+                e.Value = new String('*', e.Value.ToString().Length);
+            }
+        }
         private void Btn_cancel_Click(object sender, EventArgs e)
         {
             this.Close();
@@ -40,16 +48,19 @@ namespace MakeCloneFacebookApp.Views
             List<User> users = new List<User>();
             foreach (DataGridViewRow row in gv_users.Rows)
             {
+                if(row.Cells["username"].Value == null || row.Cells["password"].Value == null)
+                {
+                    continue;
+                }
                 User user = new User()
                 {
                     UserName = row.Cells["username"].Value.ToString(),
                     Password = row.Cells["password"].Value.ToString()
                 };
-                if(string.IsNullOrEmpty(user.UserName) || string.IsNullOrEmpty(user.Password))
+                if(!string.IsNullOrEmpty(user.UserName) && !string.IsNullOrEmpty(user.Password))
                 {
-
+                    users.Add(user);
                 }
-                users.Add(user);
             }
             if(dBHelper.SaveUsers(users))
             {
@@ -59,6 +70,48 @@ namespace MakeCloneFacebookApp.Views
             {
                 Until.ShowErrorBox("Saves users failed");
             }
+        }
+
+        private void BtnAdd_Click(object sender, EventArgs e)
+        {
+            using (frm_UserAction frm = new frm_UserAction(frm_UserAction.UserAction.Add))
+            {
+                if(frm.ShowDialog() == DialogResult.OK)
+                {
+                    //TODO
+                    gv_users.Rows.Add(frm.Result.UserName, frm.Result.Password);
+                }
+            }
+        }
+
+        private void btnEdit_Click(object sender, EventArgs e)
+        {
+            if (gv_users.SelectedRows.Count > 0)
+            {
+                using (frm_UserAction frm = new frm_UserAction(frm_UserAction.UserAction.Edit, new User()
+                {
+                    UserName = gv_users.SelectedRows[0].Cells["username"].Value.ToString(),
+                    Password = gv_users.SelectedRows[0].Cells["password"].Value.ToString()
+                }))
+                {
+                    if (frm.ShowDialog() == DialogResult.OK)
+                    {
+                        //TODO
+                        gv_users.SelectedRows[0].Cells["username"].Value = frm.Result.UserName;
+                        gv_users.SelectedRows[0].Cells["password"].Value = frm.Result.Password;
+                    }
+                }
+            }
+            else Until.ShowErrorBox("Please choose data first");
+        }
+
+        private void BtnRemove_Click(object sender, EventArgs e)
+        {
+            if (gv_users.SelectedRows.Count > 0)
+            {
+                gv_users.Rows.Remove(gv_users.SelectedRows[0]);
+            }
+            else Until.ShowErrorBox("Please choose data first");
         }
     }
 }

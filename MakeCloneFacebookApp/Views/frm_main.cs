@@ -45,5 +45,10 @@ namespace MakeCloneFacebookApp.Views
                 frm.ShowDialog();
             }
         }
+
+        private void SendMessageToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+        }
     }
 }

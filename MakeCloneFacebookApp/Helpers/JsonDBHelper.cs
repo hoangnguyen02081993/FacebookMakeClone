@@ -150,5 +150,80 @@ namespace MakeCloneFacebookApp.Helpers
                 return false;
             }
         }
+
+        public IEnumerable<string> GetSendMessages()
+        {
+            return Data.SendMessageTemplate;
+        }
+        public bool SenMessageAction(string sendMessage, ActionType type = ActionType.Add)
+        {
+            if (IsOpenSuccess)
+            {
+                try
+                {
+                    var message = Data.SendMessageTemplate.Where(m => m == sendMessage).FirstOrDefault();
+                    switch (type)
+                    {
+                        case ActionType.Add:
+                            if (message == null)
+                            {
+                                Data.SendMessageTemplate.Add(message);
+                                Save();
+                                return true;
+                            }
+                            return false;
+                        case ActionType.Edit:
+                            if (user != null)
+                            {
+                                Data.Users.Remove(user);
+                                Data.Users.Add(User);
+                                Save();
+                                return true;
+                            }
+                            return false;
+                        case ActionType.Remove:
+                            if (user != null)
+                            {
+                                Data.Users.Remove(user);
+                                Save();
+                            }
+                            return true;
+                        default:
+                            return false;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    ex.StackTrace.WriteLog();
+                    return false;
+                }
+            }
+            else
+            {
+                return false;
+            }
+        }
+        public bool SaveUsers(List<User> users)
+        {
+            if (IsOpenSuccess)
+            {
+                try
+                {
+                    Data.Users.RemoveAll(u => true);
+                    Data.Users.AddRange(users);
+                    Save();
+                    return true;
+                }
+                catch (Exception ex)
+                {
+                    ex.Message.WriteLog();
+                    return false;
+                }
+            }
+            else
+            {
+                return false;
+            }
+        }
     }
 }

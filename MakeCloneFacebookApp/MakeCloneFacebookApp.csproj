@@ -55,6 +55,7 @@
     <Compile Include="Helpers\SystemHelper.cs" />
     <Compile Include="Helpers\Until.cs" />
     <Compile Include="Models\Data.cs" />
+    <Compile Include="Models\SendMessage.cs" />
     <Compile Include="Models\User.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -63,6 +64,12 @@
     </Compile>
     <Compile Include="Views\FacebookWebBrowser.Designer.cs">
       <DependentUpon>FacebookWebBrowser.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Views\frmSendMessage.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Views\frmSendMessage.Designer.cs">
+      <DependentUpon>frmSendMessage.cs</DependentUpon>
     </Compile>
     <Compile Include="Views\frm_main.cs">
       <SubType>Form</SubType>
@@ -75,6 +82,12 @@
     </Compile>
     <Compile Include="Views\frm_PostWallMessage.Designer.cs">
       <DependentUpon>frm_PostWallMessage.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Views\frm_UserAction.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Views\frm_UserAction.Designer.cs">
+      <DependentUpon>frm_UserAction.cs</DependentUpon>
     </Compile>
     <Compile Include="Views\frm_Users.cs">
       <SubType>Form</SubType>
@@ -94,11 +107,17 @@
     <EmbeddedResource Include="Views\FacebookWebBrowser.resx">
       <DependentUpon>FacebookWebBrowser.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Views\frmSendMessage.resx">
+      <DependentUpon>frmSendMessage.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Views\frm_main.resx">
       <DependentUpon>frm_main.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Views\frm_PostWallMessage.resx">
       <DependentUpon>frm_PostWallMessage.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Views\frm_UserAction.resx">
+      <DependentUpon>frm_UserAction.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Views\frm_Users.resx">
       <DependentUpon>frm_Users.cs</DependentUpon>

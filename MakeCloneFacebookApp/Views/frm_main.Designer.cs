@@ -176,6 +176,7 @@
             this.sendMessageToolStripMenuItem.Name = "sendMessageToolStripMenuItem";
             this.sendMessageToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.sendMessageToolStripMenuItem.Text = "SendMessage";
+            this.sendMessageToolStripMenuItem.Click += new System.EventHandler(this.SendMessageToolStripMenuItem_Click);
             // 
             // UserToolStripMenuItem
             // 
