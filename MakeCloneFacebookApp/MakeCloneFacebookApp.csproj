@@ -40,6 +40,8 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Web" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -55,6 +57,7 @@
     <Compile Include="Helpers\DBHelper.cs" />
     <Compile Include="Helpers\JobConfigHelper.cs" />
     <Compile Include="Helpers\JsonDBHelper.cs" />
+    <Compile Include="Helpers\LisenceHelper.cs" />
     <Compile Include="Helpers\LogHelper.cs" />
     <Compile Include="Helpers\StringHelper.cs" />
     <Compile Include="Helpers\SystemHelper.cs" />
@@ -62,6 +65,8 @@
     <Compile Include="Models\Data.cs" />
     <Compile Include="Models\IntervalConfig.cs" />
     <Compile Include="Models\JobConfig.cs" />
+    <Compile Include="Models\LisenceRequest.cs" />
+    <Compile Include="Models\LisenceResult.cs" />
     <Compile Include="Models\PostWallMessage.cs" />
     <Compile Include="Models\SendMessage.cs" />
     <Compile Include="Models\TimmingConfig.cs" />
@@ -73,6 +78,12 @@
     </Compile>
     <Compile Include="Views\FacebookWebBrowser.Designer.cs">
       <DependentUpon>FacebookWebBrowser.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Views\frmActiveLisence.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Views\frmActiveLisence.Designer.cs">
+      <DependentUpon>frmActiveLisence.cs</DependentUpon>
     </Compile>
     <Compile Include="Views\frmPostWallMessage.cs">
       <SubType>Form</SubType>
@@ -127,6 +138,9 @@
     </Compile>
     <EmbeddedResource Include="Views\FacebookWebBrowser.resx">
       <DependentUpon>FacebookWebBrowser.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Views\frmActiveLisence.resx">
+      <DependentUpon>frmActiveLisence.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Views\frmPostWallMessage.resx">
       <DependentUpon>frmPostWallMessage.cs</DependentUpon>

@@ -17,6 +17,8 @@ namespace MakeCloneFacebookApp.Views
     public partial class frm_main : Form
     {
         private JsonDBHelper dBHelper = new JsonDBHelper();
+        private JobConfig jobConfig = null;
+        private LisenceHelper<LisenceResult> lisenceHelper = new LisenceHelper<LisenceResult>();
         public frm_main()
         {
             InitializeComponent();
@@ -25,6 +27,16 @@ namespace MakeCloneFacebookApp.Views
 
         private void Frm_main_Load(object sender, EventArgs e)
         {
+            if (!CheckAndWriteStatusLisence())
+            {
+                if (BtnRun.Text != "Run")
+                {
+                    BtnRun_Click(null, null);
+                }
+                GrpJob.Enabled = false;
+                BtnRun.Enabled = false;
+            }
+
             Cbtype.SelectedIndex = 0;
             chblusers.Items.Clear();
             foreach (var item in dBHelper.GetUsers())
@@ -96,7 +108,7 @@ namespace MakeCloneFacebookApp.Views
                 sfd.Filter = "Facebook App File | *.fajob";
                 if (sfd.ShowDialog() == DialogResult.OK)
                 {
-                    JobConfig jobConfig = new JobConfig()
+                    jobConfig = new JobConfig()
                     {
                         Type = Cbtype.SelectedIndex,
                         TimmingConfig = new TimmingConfig()
@@ -151,7 +163,7 @@ namespace MakeCloneFacebookApp.Views
                 ofd.Multiselect = false;
                 if(ofd.ShowDialog() == DialogResult.OK)
                 {
-                    JobConfig jobConfig = new JobConfig();
+                    jobConfig = new JobConfig();
                     if(jobConfig.Open(ref jobConfig, ofd.FileName))
                     {
                         Cbtype.SelectedIndex = jobConfig.Type;
@@ -222,30 +234,37 @@ namespace MakeCloneFacebookApp.Views
         {
             try
             {
+                //if(LisenceHelper<LisenceResult>.Information != null && LisenceHelper<LisenceResult>.Information.Result != 0)
+                //{
+                //    Until.ShowErrorBox("Lisence is Expired or Trial can uses this Feature...");
+                //    return;
+                //}
                 Microsoft.Win32.Registry.SetValue(@"HKEY_CURRENT_USER\Software\ATP",
                                                   "ATP-FACEBOOK",
                                                   string.Format("ATP-FACEBOOK-{0}-{1}-{2}-{3}-{4}-{5}-{6}-{7}",
-                                                                GetRanDomFourChar(),
-                                                                GetRanDomFourChar(),
-                                                                GetRanDomFourChar(),
-                                                                GetRanDomFourChar(),
-                                                                GetRanDomFourChar(),
-                                                                GetRanDomFourChar(),
-                                                                GetRanDomFourChar(),
-                                                                GetRanDomFourChar()),
+                                                                Until.GetRanDomHex(4),
+                                                                Until.GetRanDomHex(4),
+                                                                Until.GetRanDomHex(4),
+                                                                Until.GetRanDomHex(4),
+                                                                Until.GetRanDomHex(4),
+                                                                Until.GetRanDomHex(4),
+                                                                Until.GetRanDomHex(4),
+                                                                Until.GetRanDomHex(4)),
                                                   Microsoft.Win32.RegistryValueKind.String);
-                var process = Process.Start("\"" + Application.StartupPath + "/" + "Simple Facebook.exe\"");
-                process.WaitForExit();
+                RunAndWaitSimpleFacebook();
             }
             catch(Exception ex)
             {
-                string hoang1 = ex.Message;
+                Until.ShowErrorBox(ex.Message);
             }
         }
-        private string GetRanDomFourChar()
+        private void RunAndWaitSimpleFacebook()
         {
-            Thread.Sleep(10);
-            return new Random().Next(4096, 65534).ToString("X");
+            Process proc = new Process();
+            proc.StartInfo.FileName = Application.StartupPath + "/Simple Facebook/Simple Facebook.exe";
+            proc.StartInfo.WorkingDirectory = Application.StartupPath + "/Simple Facebook/";
+            proc.Start();
+            proc.WaitForExit();
         }
 
         private void BtnRun_Click(object sender, EventArgs e)
@@ -253,7 +272,11 @@ namespace MakeCloneFacebookApp.Views
             if(BtnRun.Text == "Run")
             {
                 // TODO Run
-                JobConfig jobConfig = new JobConfig()
+
+                GrpJob.Enabled = false;
+                BtnRun.Text = "Stop";
+
+                jobConfig = new JobConfig()
                 {
                     Type = Cbtype.SelectedIndex,
                     TimmingConfig = new TimmingConfig()
@@ -288,19 +311,184 @@ namespace MakeCloneFacebookApp.Views
                         jobConfig.UserConfigs.Add(user);
                     }
                 }
-
-                using (FacebookWebBrowser frm = new FacebookWebBrowser(jobConfig, dBHelper.GetPostWallMessages().ToList(), dBHelper.GetSendMessages().ToList()))
+                if (jobConfig.UserConfigs.Count == 0)
                 {
-                    frm.ShowDialog();
+                    if (Until.ShowYesNoQuestionWarning("This job isn't implement any users to run, can you want to run it?") == DialogResult.No)
+                    {
+                        GrpJob.Enabled = true;
+                        BtnRun.Text = "Run";
+                        return;
+
+                    }
                 }
 
-                    BtnRun.Text = "Stop";
+                switch (jobConfig.Type)
+                {
+                    case 0:
+                        if(!jobConfig.TimmingConfig.IsUsedOne &&
+                           !jobConfig.TimmingConfig.IsUsedTwo &&
+                           !jobConfig.TimmingConfig.IsUsedThree &&
+                           !jobConfig.TimmingConfig.IsUsedFour)
+                        {
+                            if(Until.ShowYesNoQuestionWarning("This job isn't implement any time to run, can you want to run it?") == DialogResult.No)
+                            {
+                                GrpJob.Enabled = true;
+                                BtnRun.Text = "Run";
+                                return;
+                            }
+                        }
+                        OnTimeRunTick = TmRunTick_Timming;
+                        TmRun.Interval = 500;
+                        TmRun.Enabled = true;
+                        break;
+                    case 1:
+                        OnTimeRunTick = TmRunTick_Interval;
+                        TmRun.Interval = jobConfig.IntervalConfig.Interval * 1000;
+                        if(jobConfig.IntervalConfig.IsRunNow)
+                        {
+                            using (FacebookWebBrowser frm = new FacebookWebBrowser(jobConfig, dBHelper.GetPostWallMessages().ToList(), dBHelper.GetSendMessages().ToList()))
+                            {
+                                frm.ShowDialog();
+                            }
+                        }
+                        TmRun.Enabled = true;
+                        break;
+                    default:
+                        break;
+                }
             }
             else
             {
                 // TODO Stop
+                TmRun.Enabled = false;
 
+                GrpJob.Enabled = true;
                 BtnRun.Text = "Run";
+            }
+        }
+        private delegate void TimerRunTick();
+        private TimerRunTick OnTimeRunTick = null;
+
+        private void TmRunTick_Timming()
+        {
+            TmRun.Enabled = false;
+
+            if(jobConfig.TimmingConfig.IsUsedOne && 
+               DateTime.Now.TimeOfDay.TotalSeconds - jobConfig.TimmingConfig.TimeOne > 0 &&
+               DateTime.Now.TimeOfDay.TotalSeconds - jobConfig.TimmingConfig.TimeOne < 2)
+            {
+                using (FacebookWebBrowser frm = new FacebookWebBrowser(jobConfig, dBHelper.GetPostWallMessages().ToList(), dBHelper.GetSendMessages().ToList()))
+                {
+                    frm.ShowDialog();
+                }
+            }
+            else if (jobConfig.TimmingConfig.IsUsedTwo &&
+                     DateTime.Now.TimeOfDay.TotalSeconds - jobConfig.TimmingConfig.TimeTwo > 0 &&
+                     DateTime.Now.TimeOfDay.TotalSeconds - jobConfig.TimmingConfig.TimeTwo < 2)
+            {
+                using (FacebookWebBrowser frm = new FacebookWebBrowser(jobConfig, dBHelper.GetPostWallMessages().ToList(), dBHelper.GetSendMessages().ToList()))
+                {
+                    frm.ShowDialog();
+                }
+            }
+            else if (jobConfig.TimmingConfig.IsUsedThree &&
+                     DateTime.Now.TimeOfDay.TotalSeconds - jobConfig.TimmingConfig.TimeThree > 0 &&
+                     DateTime.Now.TimeOfDay.TotalSeconds - jobConfig.TimmingConfig.TimeThree < 2)
+            {
+                using (FacebookWebBrowser frm = new FacebookWebBrowser(jobConfig, dBHelper.GetPostWallMessages().ToList(), dBHelper.GetSendMessages().ToList()))
+                {
+                    frm.ShowDialog();
+                }
+            }
+            else if (jobConfig.TimmingConfig.IsUsedFour &&
+                     DateTime.Now.TimeOfDay.TotalSeconds - jobConfig.TimmingConfig.TimeFour > 0 &&
+                     DateTime.Now.TimeOfDay.TotalSeconds - jobConfig.TimmingConfig.TimeFour < 2)
+            {
+                using (FacebookWebBrowser frm = new FacebookWebBrowser(jobConfig, dBHelper.GetPostWallMessages().ToList(), dBHelper.GetSendMessages().ToList()))
+                {
+                    frm.ShowDialog();
+                }
+            }
+
+            TmRun.Enabled = true;
+        }
+        private void TmRunTick_Interval()
+        {
+            TmRun.Enabled = false;
+
+            using (FacebookWebBrowser frm = new FacebookWebBrowser(jobConfig, dBHelper.GetPostWallMessages().ToList(), dBHelper.GetSendMessages().ToList()))
+            {
+                frm.ShowDialog();
+            }
+
+            TmRun.Enabled = true;
+        }
+
+        private void TmRun_Tick(object sender, EventArgs e)
+        {
+            OnTimeRunTick?.Invoke();
+        }
+
+        private void TmCheckLisence_Tick(object sender, EventArgs e)
+        {
+
+            TmCheckLisence.Enabled = false;
+            if(!CheckAndWriteStatusLisence())
+            {
+                if(BtnRun.Text != "Run")
+                {
+                    BtnRun_Click(null, null);
+                }
+                GrpJob.Enabled = false;
+                BtnRun.Enabled = false;
+            }
+            TmCheckLisence.Enabled = true;
+        }
+        private bool CheckAndWriteStatusLisence()
+        {
+            try
+            {
+                var result = lisenceHelper.GetLisenceResult();
+                switch (result.Result)
+                {
+                    case 0:
+                        lblisenceinfo.ForeColor = Color.Blue;
+                        lblisenceinfo.Text = "Actived forever!!!";
+                        return true;
+                    case 1:
+                        lblisenceinfo.ForeColor = Color.YellowGreen;
+                        lblisenceinfo.Text = "[Trial] Expired Date: " + result.ExpiredDateString;
+                        return true;
+                    case 2:
+                        lblisenceinfo.ForeColor = Color.Blue;
+                        lblisenceinfo.Text = "Actived. Expired Date: " + result.ExpiredDateString;
+                        return true;
+                    case -1:
+                        lblisenceinfo.ForeColor = Color.Red;
+                        lblisenceinfo.Text = "This lisence is expired. Please contact administrator to active lisence";
+                        return false;
+                    default:
+                        Until.ShowErrorBox("Can't connect to server. This application will be close.");
+                        this.Close();
+                        return false;
+                }
+            }
+            catch
+            {
+                Until.ShowErrorBox("Can't connect to server. This application will be close.");
+                this.Close();
+                return false;
+            }
+        }
+
+        private void LisenceToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            using (frmActiveLisence frm = new frmActiveLisence(ref lisenceHelper))
+            {
+                if(frm.ShowDialog() == DialogResult.OK)
+                {
+                    CheckAndWriteStatusLisence();
+                }
             }
         }
     }

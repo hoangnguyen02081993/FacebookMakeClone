@@ -28,10 +28,14 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.components = new System.ComponentModel.Container();
+            this.GrpJob = new System.Windows.Forms.GroupBox();
+            this.nudpeoplecount = new System.Windows.Forms.NumericUpDown();
+            this.label7 = new System.Windows.Forms.Label();
+            this.chbsendmessage = new System.Windows.Forms.CheckBox();
+            this.chbpostwall = new System.Windows.Forms.CheckBox();
             this.BtnOpen = new System.Windows.Forms.Button();
             this.BtnSave = new System.Windows.Forms.Button();
-            this.BtnRun = new System.Windows.Forms.Button();
             this.nudnotify = new System.Windows.Forms.NumericUpDown();
             this.label4 = new System.Windows.Forms.Label();
             this.label5 = new System.Windows.Forms.Label();
@@ -54,6 +58,7 @@
             this.label1 = new System.Windows.Forms.Label();
             this.label6 = new System.Windows.Forms.Label();
             this.chblusers = new System.Windows.Forms.CheckedListBox();
+            this.BtnRun = new System.Windows.Forms.Button();
             this.configsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.postWallMessageToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.sendMessageToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -62,53 +67,87 @@
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.referenceAppToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.simpleFacebookToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.lblisenceinfo = new System.Windows.Forms.Label();
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.userGuideToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.lisenceToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutUsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.chbpostwall = new System.Windows.Forms.CheckBox();
-            this.chbsendmessage = new System.Windows.Forms.CheckBox();
-            this.label7 = new System.Windows.Forms.Label();
-            this.nudpeoplecount = new System.Windows.Forms.NumericUpDown();
-            this.groupBox1.SuspendLayout();
+            this.lblisenceinfo = new System.Windows.Forms.Label();
+            this.TmRun = new System.Windows.Forms.Timer(this.components);
+            this.TmCheckLisence = new System.Windows.Forms.Timer(this.components);
+            this.GrpJob.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nudpeoplecount)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudnotify)).BeginInit();
             this.groupBox2.SuspendLayout();
             this.pntimming.SuspendLayout();
             this.pninterval.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudinterval)).BeginInit();
             this.menuStrip1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.nudpeoplecount)).BeginInit();
             this.SuspendLayout();
             // 
-            // groupBox1
+            // GrpJob
             // 
-            this.groupBox1.Controls.Add(this.nudpeoplecount);
-            this.groupBox1.Controls.Add(this.label7);
-            this.groupBox1.Controls.Add(this.chbsendmessage);
-            this.groupBox1.Controls.Add(this.chbpostwall);
-            this.groupBox1.Controls.Add(this.BtnOpen);
-            this.groupBox1.Controls.Add(this.BtnSave);
-            this.groupBox1.Controls.Add(this.BtnRun);
-            this.groupBox1.Controls.Add(this.nudnotify);
-            this.groupBox1.Controls.Add(this.label4);
-            this.groupBox1.Controls.Add(this.label5);
-            this.groupBox1.Controls.Add(this.groupBox2);
-            this.groupBox1.Controls.Add(this.Cbtype);
-            this.groupBox1.Controls.Add(this.label1);
-            this.groupBox1.Controls.Add(this.label6);
-            this.groupBox1.Controls.Add(this.chblusers);
-            this.groupBox1.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.groupBox1.Location = new System.Drawing.Point(12, 27);
-            this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(520, 314);
-            this.groupBox1.TabIndex = 8;
-            this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "Job Area";
+            this.GrpJob.Controls.Add(this.nudpeoplecount);
+            this.GrpJob.Controls.Add(this.label7);
+            this.GrpJob.Controls.Add(this.chbsendmessage);
+            this.GrpJob.Controls.Add(this.chbpostwall);
+            this.GrpJob.Controls.Add(this.BtnOpen);
+            this.GrpJob.Controls.Add(this.BtnSave);
+            this.GrpJob.Controls.Add(this.nudnotify);
+            this.GrpJob.Controls.Add(this.label4);
+            this.GrpJob.Controls.Add(this.label5);
+            this.GrpJob.Controls.Add(this.groupBox2);
+            this.GrpJob.Controls.Add(this.Cbtype);
+            this.GrpJob.Controls.Add(this.label1);
+            this.GrpJob.Controls.Add(this.label6);
+            this.GrpJob.Controls.Add(this.chblusers);
+            this.GrpJob.FlatStyle = System.Windows.Forms.FlatStyle.System;
+            this.GrpJob.Location = new System.Drawing.Point(12, 27);
+            this.GrpJob.Name = "GrpJob";
+            this.GrpJob.Size = new System.Drawing.Size(520, 281);
+            this.GrpJob.TabIndex = 8;
+            this.GrpJob.TabStop = false;
+            this.GrpJob.Text = "Job Area";
+            // 
+            // nudpeoplecount
+            // 
+            this.nudpeoplecount.Location = new System.Drawing.Point(223, 202);
+            this.nudpeoplecount.Name = "nudpeoplecount";
+            this.nudpeoplecount.Size = new System.Drawing.Size(82, 20);
+            this.nudpeoplecount.TabIndex = 15;
+            this.nudpeoplecount.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            // 
+            // label7
+            // 
+            this.label7.AutoSize = true;
+            this.label7.Location = new System.Drawing.Point(143, 206);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(74, 13);
+            this.label7.TabIndex = 14;
+            this.label7.Text = "People Count:";
+            // 
+            // chbsendmessage
+            // 
+            this.chbsendmessage.AutoSize = true;
+            this.chbsendmessage.Location = new System.Drawing.Point(16, 204);
+            this.chbsendmessage.Name = "chbsendmessage";
+            this.chbsendmessage.Size = new System.Drawing.Size(116, 17);
+            this.chbsendmessage.TabIndex = 13;
+            this.chbsendmessage.Text = "Is Send message ?";
+            this.chbsendmessage.UseVisualStyleBackColor = true;
+            // 
+            // chbpostwall
+            // 
+            this.chbpostwall.AutoSize = true;
+            this.chbpostwall.Location = new System.Drawing.Point(16, 227);
+            this.chbpostwall.Name = "chbpostwall";
+            this.chbpostwall.Size = new System.Drawing.Size(88, 17);
+            this.chbpostwall.TabIndex = 13;
+            this.chbpostwall.Text = "Is PostWall ?";
+            this.chbpostwall.UseVisualStyleBackColor = true;
             // 
             // BtnOpen
             // 
-            this.BtnOpen.Location = new System.Drawing.Point(22, 285);
+            this.BtnOpen.Location = new System.Drawing.Point(22, 250);
             this.BtnOpen.Name = "BtnOpen";
             this.BtnOpen.Size = new System.Drawing.Size(75, 23);
             this.BtnOpen.TabIndex = 12;
@@ -118,23 +157,13 @@
             // 
             // BtnSave
             // 
-            this.BtnSave.Location = new System.Drawing.Point(103, 285);
+            this.BtnSave.Location = new System.Drawing.Point(103, 250);
             this.BtnSave.Name = "BtnSave";
             this.BtnSave.Size = new System.Drawing.Size(75, 23);
             this.BtnSave.TabIndex = 11;
             this.BtnSave.Text = "Save";
             this.BtnSave.UseVisualStyleBackColor = true;
             this.BtnSave.Click += new System.EventHandler(this.BtnSave_Click);
-            // 
-            // BtnRun
-            // 
-            this.BtnRun.Location = new System.Drawing.Point(439, 285);
-            this.BtnRun.Name = "BtnRun";
-            this.BtnRun.Size = new System.Drawing.Size(75, 23);
-            this.BtnRun.TabIndex = 10;
-            this.BtnRun.Text = "Run";
-            this.BtnRun.UseVisualStyleBackColor = true;
-            this.BtnRun.Click += new System.EventHandler(this.BtnRun_Click);
             // 
             // nudnotify
             // 
@@ -385,6 +414,16 @@
             this.chblusers.Size = new System.Drawing.Size(172, 154);
             this.chblusers.TabIndex = 0;
             // 
+            // BtnRun
+            // 
+            this.BtnRun.Location = new System.Drawing.Point(457, 313);
+            this.BtnRun.Name = "BtnRun";
+            this.BtnRun.Size = new System.Drawing.Size(75, 23);
+            this.BtnRun.TabIndex = 10;
+            this.BtnRun.Text = "Run";
+            this.BtnRun.UseVisualStyleBackColor = true;
+            this.BtnRun.Click += new System.EventHandler(this.BtnRun_Click);
+            // 
             // configsToolStripMenuItem
             // 
             this.configsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -451,16 +490,6 @@
             this.simpleFacebookToolStripMenuItem.Text = "Simple Facebook";
             this.simpleFacebookToolStripMenuItem.Click += new System.EventHandler(this.SimpleFacebookToolStripMenuItem_Click);
             // 
-            // lblisenceinfo
-            // 
-            this.lblisenceinfo.AutoSize = true;
-            this.lblisenceinfo.Location = new System.Drawing.Point(410, 344);
-            this.lblisenceinfo.Name = "lblisenceinfo";
-            this.lblisenceinfo.Size = new System.Drawing.Size(128, 13);
-            this.lblisenceinfo.TabIndex = 9;
-            this.lblisenceinfo.Text = "(Lisence information here)";
-            this.lblisenceinfo.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            // 
             // helpToolStripMenuItem
             // 
             this.helpToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -474,7 +503,7 @@
             // userGuideToolStripMenuItem
             // 
             this.userGuideToolStripMenuItem.Name = "userGuideToolStripMenuItem";
-            this.userGuideToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.userGuideToolStripMenuItem.Size = new System.Drawing.Size(131, 22);
             this.userGuideToolStripMenuItem.Text = "User Guide";
             // 
             // lisenceToolStripMenuItem
@@ -482,49 +511,34 @@
             this.lisenceToolStripMenuItem.Name = "lisenceToolStripMenuItem";
             this.lisenceToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.lisenceToolStripMenuItem.Text = "Lisence";
+            this.lisenceToolStripMenuItem.Click += new System.EventHandler(this.LisenceToolStripMenuItem_Click);
             // 
             // aboutUsToolStripMenuItem
             // 
             this.aboutUsToolStripMenuItem.Name = "aboutUsToolStripMenuItem";
-            this.aboutUsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.aboutUsToolStripMenuItem.Size = new System.Drawing.Size(131, 22);
             this.aboutUsToolStripMenuItem.Text = "About us";
             // 
-            // chbpostwall
+            // lblisenceinfo
             // 
-            this.chbpostwall.AutoSize = true;
-            this.chbpostwall.Location = new System.Drawing.Point(16, 227);
-            this.chbpostwall.Name = "chbpostwall";
-            this.chbpostwall.Size = new System.Drawing.Size(88, 17);
-            this.chbpostwall.TabIndex = 13;
-            this.chbpostwall.Text = "Is PostWall ?";
-            this.chbpostwall.UseVisualStyleBackColor = true;
+            this.lblisenceinfo.AutoSize = true;
+            this.lblisenceinfo.Location = new System.Drawing.Point(6, 344);
+            this.lblisenceinfo.Name = "lblisenceinfo";
+            this.lblisenceinfo.Size = new System.Drawing.Size(128, 13);
+            this.lblisenceinfo.TabIndex = 9;
+            this.lblisenceinfo.Text = "(Lisence information here)";
+            this.lblisenceinfo.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
-            // chbsendmessage
+            // TmRun
             // 
-            this.chbsendmessage.AutoSize = true;
-            this.chbsendmessage.Location = new System.Drawing.Point(16, 204);
-            this.chbsendmessage.Name = "chbsendmessage";
-            this.chbsendmessage.Size = new System.Drawing.Size(116, 17);
-            this.chbsendmessage.TabIndex = 13;
-            this.chbsendmessage.Text = "Is Send message ?";
-            this.chbsendmessage.UseVisualStyleBackColor = true;
+            this.TmRun.Interval = 500;
+            this.TmRun.Tick += new System.EventHandler(this.TmRun_Tick);
             // 
-            // label7
+            // TmCheckLisence
             // 
-            this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(143, 206);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(74, 13);
-            this.label7.TabIndex = 14;
-            this.label7.Text = "People Count:";
-            // 
-            // nudpeoplecount
-            // 
-            this.nudpeoplecount.Location = new System.Drawing.Point(223, 202);
-            this.nudpeoplecount.Name = "nudpeoplecount";
-            this.nudpeoplecount.Size = new System.Drawing.Size(82, 20);
-            this.nudpeoplecount.TabIndex = 15;
-            this.nudpeoplecount.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            this.TmCheckLisence.Enabled = true;
+            this.TmCheckLisence.Interval = 10800000;
+            this.TmCheckLisence.Tick += new System.EventHandler(this.TmCheckLisence_Tick);
             // 
             // frm_main
             // 
@@ -532,8 +546,9 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(550, 359);
             this.Controls.Add(this.lblisenceinfo);
-            this.Controls.Add(this.groupBox1);
+            this.Controls.Add(this.GrpJob);
             this.Controls.Add(this.menuStrip1);
+            this.Controls.Add(this.BtnRun);
             this.MainMenuStrip = this.menuStrip1;
             this.MaximizeBox = false;
             this.MaximumSize = new System.Drawing.Size(566, 398);
@@ -541,8 +556,9 @@
             this.Name = "frm_main";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "frm_main";
-            this.groupBox1.ResumeLayout(false);
-            this.groupBox1.PerformLayout();
+            this.GrpJob.ResumeLayout(false);
+            this.GrpJob.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nudpeoplecount)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudnotify)).EndInit();
             this.groupBox2.ResumeLayout(false);
             this.pntimming.ResumeLayout(false);
@@ -552,7 +568,6 @@
             ((System.ComponentModel.ISupportInitialize)(this.nudinterval)).EndInit();
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.nudpeoplecount)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -560,7 +575,7 @@
 
         #endregion
 
-        private System.Windows.Forms.GroupBox groupBox1;
+        private System.Windows.Forms.GroupBox GrpJob;
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.CheckedListBox chblusers;
         private System.Windows.Forms.ComboBox Cbtype;
@@ -603,5 +618,7 @@
         private System.Windows.Forms.Label label7;
         private System.Windows.Forms.CheckBox chbsendmessage;
         private System.Windows.Forms.CheckBox chbpostwall;
+        private System.Windows.Forms.Timer TmRun;
+        private System.Windows.Forms.Timer TmCheckLisence;
     }
 }

@@ -71,7 +71,7 @@ namespace MakeCloneFacebookApp.Views
             if (userIndex < Config.UserConfigs.Count)
             {
                 CurrentRunUser = Config.UserConfigs[userIndex];
-                userIndex = 0;
+                userIndex++;
                 return true;
             }
             else
@@ -99,6 +99,10 @@ namespace MakeCloneFacebookApp.Views
                         Action = FacebookAction.NoAction;
                         ActionCompleted();
                     }
+                    else
+                    {
+                        SetStatus("Completed", true);
+                    }
                 }
             }
             else if(Action == FacebookAction.Postwall)
@@ -115,6 +119,10 @@ namespace MakeCloneFacebookApp.Views
                         Action = FacebookAction.NoAction;
                         ActionCompleted();
                     }
+                    else
+                    {
+                        SetStatus("Completed", true);
+                    }
                 }
             }
             else if(Action == FacebookAction.SendMessage)
@@ -125,18 +133,24 @@ namespace MakeCloneFacebookApp.Views
                     Action = FacebookAction.NoAction;
                     ActionCompleted();
                 }
+                else
+                {
+                    SetStatus("Completed", true);
+                }
             }
         }
         private void BeginPostWall()
         {
             Action = FacebookAction.Postwall;
             Step = 0;
+            SetStatus("Posting Wall...");
             wb.Navigate(FBURL);
         }
         private void BeginSendMessage()
         {
             Action = FacebookAction.SendMessage;
             Step = 0;
+            SetStatus("Sending message...");
             wb.Navigate(FBURL);
         }
 
@@ -144,8 +158,15 @@ namespace MakeCloneFacebookApp.Views
         {
             if (Action == FacebookAction.Postwall)
             {
-                if (wb.Document.GetElementById("email") != null)
+                if (wb.Document.GetElementById("pass") != null)
                 {
+                    // Logined but not go wall => incorrect password
+                    if(Step == 1)
+                    {
+                        Step = -1;
+                    }
+
+                    SetStatus("Login");
                     wb.Document.GetElementById("email").SetAttribute("value", CurrentRunUser.UserName);
                     wb.Document.GetElementById("pass").SetAttribute("value", CurrentRunUser.Password);
                     var login_form = wb.Document.GetElementById("login_form");
@@ -159,6 +180,7 @@ namespace MakeCloneFacebookApp.Views
                 {
                     if (Step == 0) // Login before; Go logout.
                     {
+                        SetStatus("Logout");
                         System.Threading.Thread thrun = new System.Threading.Thread(() =>
                         {
                             System.Threading.Thread.Sleep(2000);
@@ -212,6 +234,7 @@ namespace MakeCloneFacebookApp.Views
                     }
                     else if (Step == 1) // Login completed; go to home
                     {
+                        SetStatus("Go to Home");
                         var a_s = wb.Document.GetElementsByTagName("a");
                         foreach (HtmlElement item in a_s)
                         {
@@ -225,6 +248,7 @@ namespace MakeCloneFacebookApp.Views
                     }
                     else if (Step == 2) // go to write in your wall.
                     {
+                        SetStatus("Posting wall");
                         var div_s = wb.Document.GetElementsByTagName("div");
                         foreach (HtmlElement item in div_s)
                         {
@@ -281,8 +305,14 @@ namespace MakeCloneFacebookApp.Views
             }
             else if(Action == FacebookAction.SendMessage)
             {
-                if (wb.Document.GetElementById("email") != null)
+                if (wb.Document.GetElementById("pass") != null)
                 {
+                    // Logined but not go wall => incorrect password
+                    if (Step == 1)
+                    {
+                        Step = -1;
+                    }
+                    SetStatus("Login");
                     wb.Document.GetElementById("email").SetAttribute("value", CurrentRunUser.UserName);
                     wb.Document.GetElementById("pass").SetAttribute("value", CurrentRunUser.Password);
                     var login_form = wb.Document.GetElementById("login_form");
@@ -296,6 +326,7 @@ namespace MakeCloneFacebookApp.Views
                 {
                     if (Step == 0) // Login before; Go logout.
                     {
+                        SetStatus("Logout");
                         System.Threading.Thread thrun = new System.Threading.Thread(() =>
                         {
                             try
@@ -411,6 +442,7 @@ namespace MakeCloneFacebookApp.Views
                                                 System.Threading.Thread.Sleep(5000);
                                                 foreach (HtmlElement item in div_s)
                                                 {
+                                                    SetStatus("Sending message");
                                                     if (item.GetAttribute("classname") == "notranslate _5rpu" && item.GetAttribute("data-testid") == "")
                                                     {
                                                         this.Invoke(new Action(() =>
@@ -485,6 +517,31 @@ namespace MakeCloneFacebookApp.Views
         private string RandomSendMessage()
         {
             return SendMessages[new Random().Next(0, SendMessages.Count() - 1)].Message;
+        }
+        private void SetStatus(string message, bool AllCompleted = false)
+        {
+            this.Invoke(new Action(() =>
+            {
+                lbstatus.Text = string.Format("User: '{0}' => Action: '{1}' => Status: '{2}'", CurrentRunUser.UserName, Action.ToString(), message);
+            }));
+            if (AllCompleted)
+            {
+                new System.Threading.Thread(new System.Threading.ThreadStart(() =>
+                {
+                    int totalSecondLeft = 10;
+                    while (totalSecondLeft-- > 0)
+                    {
+                        this.Invoke(new Action(() =>
+                        {
+                            lbstatus.Text = string.Format("The website will be close in {0}", totalSecondLeft);
+                        }));
+                    }
+                    this.Invoke(new Action(() =>
+                    {
+                        this.Close();
+                    }));
+                })).Start();
+            }
         }
     }
 }

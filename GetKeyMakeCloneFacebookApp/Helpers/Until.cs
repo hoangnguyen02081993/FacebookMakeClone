@@ -8,7 +8,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace MakeCloneFacebookApp.Helpers
+namespace GetKeyMakeCloneFacebookApp.Helpers
 {
     public class Until
     {
@@ -31,7 +31,7 @@ namespace MakeCloneFacebookApp.Helpers
         public static string GetRanDomHex(int length)
         {
             Thread.Sleep(10);
-            return new Random().Next((int)Math.Pow(16,length - 1), (int)Math.Pow(16, length) - 2).ToString("X");
+            return new Random().Next((int)Math.Pow(16, length - 1), (int)Math.Pow(16, length) - 2).ToString("X");
         }
         public static byte[] Create<T>(T value)
         {
